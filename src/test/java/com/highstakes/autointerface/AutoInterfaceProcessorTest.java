@@ -60,7 +60,7 @@ public class AutoInterfaceProcessorTest {
             + "import java.util.function.Predicate;\n"
             + "import java.util.function.UnaryOperator;\n"
             + "\n"
-            + "interface BasicClassInterface<T extends Integer> {\n"
+            + "public interface BasicClassInterface<T extends Integer> {\n"
             + "    boolean containsAll(Collection<?> c);\n"
             + "\n"
             + "    void trimToSize();\n"

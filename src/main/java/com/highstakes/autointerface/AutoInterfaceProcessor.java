@@ -103,6 +103,7 @@ public class AutoInterfaceProcessor extends AbstractProcessor {
 
   private TypeSpec.Builder getTypeSpec(TypeElement type) {
     return TypeSpec.interfaceBuilder(getInterfaceName(type))
+        .addModifiers(Modifier.PUBLIC)
         .addTypeVariables(getTypeVariables(type))
         .addOriginatingElement(type);
   }
