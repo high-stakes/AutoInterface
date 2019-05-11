@@ -10,7 +10,8 @@ import org.junit.Test;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 
-public class AutoInterfaceProcessorTest {
+@AutoInterface
+public class AutoInterfaceProcessorTest implements AutoInterfaceProcessorTestInterface {
 
   @Test
   public void shouldInheritGenericsAndSubstituteTypes() {

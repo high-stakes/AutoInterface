@@ -1,4 +1,15 @@
-apply plugin: 'java'
+buildscript {
+  repositories {
+    jcenter()
+    mavenCentral()
+  }
+}
+
+plugins {
+  id "com.jfrog.bintray" version "1.8.4"
+  id "maven-publish"
+  id "java"
+}
 
 repositories {
   jcenter()
@@ -10,6 +21,8 @@ dependencies {
   annotationProcessor 'com.google.auto.service:auto-service:1.0-rc5'
   compile 'com.squareup:javapoet:1.11.1'
 
+  testAnnotationProcessor sourceSets.main.output
+  testAnnotationProcessor 'com.squareup:javapoet:1.11.1'
   testCompile 'com.google.testing.compile:compile-testing:0.16'
   testCompile 'com.google.truth:truth:0.44'
   testCompile 'junit:junit:4.12'
@@ -19,3 +32,59 @@ version = '0.1.0'
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
+
+def pomConfig = {
+  licenses {
+    license {
+      name 'The Apache Software License, Version 2.0'
+      url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+      distribution "repo"
+    }
+  }
+  developers {
+    developer {
+      id "high-stakes"
+    }
+  }
+
+  scm {
+    url "https://github.com/high-stakes/AutoInterface"
+  }
+}
+
+publishing {
+  publications {
+    mavenPublication(MavenPublication) {
+      from components.java
+      groupId 'com.highstakes'
+      artifactId 'autointerface'
+      pom.withXml {
+        def root = asNode()
+        root.appendNode('description', 'Java annotation processor to generate interfaces.')
+        root.appendNode('name', 'AutoInterface')
+        root.appendNode('url', 'https://github.com/high-stakes/AutoInterface')
+        root.children().last() + pomConfig
+      }
+    }
+  }
+}
+
+//./gradlew bintrayUpload -Dbintray.user=<YOUR_USER_NAME> -Dbintray.key=<YOUR_API_KEY>
+bintray {
+  user = System.getProperty('bintray.user')
+  key = System.getProperty('bintray.key')
+  publications = ['mavenPublication']
+
+  pkg {
+    repo = 'AutoInterface'
+    name = 'AutoInterface'
+    userOrg = 'high-stakes'
+    licenses = ['Apache-2.0']
+    vcsUrl = 'https://github.com/high-stakes/AutoInterface'
+    version {
+      name = project.version
+      desc = project.version
+      released  = new Date()
+    }
+  }
+}

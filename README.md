@@ -12,6 +12,13 @@ Generate Java interfaces from annotated class files based on their public method
 
 ## Usage
 
+```groovy
+//Reference dependency
+dependencies {
+  annotationProcessor 'com.highstakes:autointerface:<version>'
+}
+```
+
 ```java
 //Annotated the class you wish to generate an interface for
 @AutoInterface
