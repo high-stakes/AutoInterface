@@ -25,7 +25,7 @@ dependencies {
 }
 
 group = 'io.github.high-stakes'
-version = '0.1.1'
+version = '0.1.2'
 
 ext {
   licenseName = 'Apache-2.0'
@@ -98,13 +98,13 @@ bintray {
   publications = ['mavenPublication']
   pkg {
     repo = project.repoName
-    name = project.projectName
+    name = "${project.group}:${project.name}"
     userOrg = project.developerId
     licenses = [project.licenseName]
     vcsUrl = project.projectUrl
     version {
       name = project.version
-      desc = "${project.projectName}: ${project.version}"
+      desc = "${project.group}:${project.name}:${project.version}"
       released  = new Date()
     }
   }
