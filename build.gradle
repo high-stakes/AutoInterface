@@ -1,7 +1,6 @@
 buildscript {
   repositories {
     jcenter()
-    mavenCentral()
   }
 }
 
@@ -21,34 +20,57 @@ dependencies {
   annotationProcessor 'com.google.auto.service:auto-service:1.0-rc5'
   compile 'com.squareup:javapoet:1.11.1'
 
-  testAnnotationProcessor sourceSets.main.output
-  testAnnotationProcessor 'com.squareup:javapoet:1.11.1'
   testCompile 'com.google.testing.compile:compile-testing:0.16'
-  testCompile 'com.google.truth:truth:0.44'
   testCompile 'junit:junit:4.12'
 }
 
-version = '0.1.0'
+group = 'io.github.high-stakes'
+version = '0.1.1'
 
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
+ext {
+  licenseName = 'Apache-2.0'
+  licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+  developerId = 'high-stakes'
+  developerUrl = 'https://github.com/high-stakes'
+  projectUrl = 'https://github.com/high-stakes/AutoInterface'
+  projectName = 'AutoInterface'
+  projectDescription = 'Java annotation processor to generate interfaces.'
+  repoName = 'github-maven'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives sourcesJar
+  archives javadocJar
+}
 
 def pomConfig = {
   licenses {
     license {
-      name 'The Apache Software License, Version 2.0'
-      url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-      distribution "repo"
+      name project.licenseName
+      url project.licenseUrl
     }
   }
   developers {
     developer {
-      id "high-stakes"
+      id project.developerId
+      url project.developerUrl
     }
   }
-
   scm {
-    url "https://github.com/high-stakes/AutoInterface"
+    url project.projectUrl
   }
 }
 
@@ -56,13 +78,13 @@ publishing {
   publications {
     mavenPublication(MavenPublication) {
       from components.java
-      groupId 'com.highstakes'
-      artifactId 'autointerface'
+      artifact sourcesJar
+      artifact javadocJar
       pom.withXml {
         def root = asNode()
-        root.appendNode('description', 'Java annotation processor to generate interfaces.')
-        root.appendNode('name', 'AutoInterface')
-        root.appendNode('url', 'https://github.com/high-stakes/AutoInterface')
+        root.appendNode('description', project.projectDescription)
+        root.appendNode('name', project.projectName)
+        root.appendNode('url', project.projectUrl)
         root.children().last() + pomConfig
       }
     }
@@ -74,16 +96,15 @@ bintray {
   user = System.getProperty('bintray.user')
   key = System.getProperty('bintray.key')
   publications = ['mavenPublication']
-
   pkg {
-    repo = 'AutoInterface'
-    name = 'AutoInterface'
-    userOrg = 'high-stakes'
-    licenses = ['Apache-2.0']
-    vcsUrl = 'https://github.com/high-stakes/AutoInterface'
+    repo = project.repoName
+    name = project.projectName
+    userOrg = project.developerId
+    licenses = [project.licenseName]
+    vcsUrl = project.projectUrl
     version {
       name = project.version
-      desc = project.version
+      desc = "${project.projectName}: ${project.version}"
       released  = new Date()
     }
   }

@@ -1,17 +1,14 @@
 package com.highstakes.autointerface;
 
-import com.google.common.truth.Truth;
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import java.util.Locale;
 import javax.tools.JavaFileObject;
 import org.junit.Test;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 
-@AutoInterface
-public class AutoInterfaceProcessorTest implements AutoInterfaceProcessorTestInterface {
+public class AutoInterfaceProcessorTest {
 
   @Test
   public void shouldInheritGenericsAndSubstituteTypes() {
@@ -132,9 +129,10 @@ public class AutoInterfaceProcessorTest implements AutoInterfaceProcessorTestInt
             + "\n"
             + "    Integer method2(Integer input) throws Exception;\n"
             + "}"
-        );
+    );
 
-    Compilation compilation = javac().withProcessors(new AutoInterfaceProcessor()).compile(baseClass,superClass,superSuperClass);
+    Compilation compilation = javac().withProcessors(new AutoInterfaceProcessor())
+        .compile(baseClass, superClass, superSuperClass);
     assertThat(compilation).succeededWithoutWarnings();
     assertThat(compilation)
         .generatedSourceFile("test.BasicClassInterface")

@@ -1,6 +1,7 @@
 # AutoInterface - Java annotation processor
-
 Generate Java interfaces from annotated class files based on their public methods.
+
+[![Build Status](https://travis-ci.org/high-stakes/AutoInterface.svg?branch=master)](https://travis-ci.org/high-stakes/AutoInterface)
 
 ## Benefits
 
@@ -15,7 +16,7 @@ Generate Java interfaces from annotated class files based on their public method
 ```groovy
 //Reference dependency
 dependencies {
-  annotationProcessor 'com.highstakes:autointerface:<version>'
+  annotationProcessor 'io.github.high-stakes:<version>'
 }
 ```
 
