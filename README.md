@@ -1,6 +1,7 @@
 # AutoInterface - Java annotation processor
 [![Build Status](https://travis-ci.org/high-stakes/AutoInterface.svg?branch=master)](https://travis-ci.org/high-stakes/AutoInterface)
-[ ![Download](https://api.bintray.com/packages/high-stakes/github-maven/io.github.high-stakes%3Aautointerface/images/download.svg) ](https://bintray.com/high-stakes/github-maven/io.github.high-stakes%3Aautointerface/_latestVersion) 
+![Maven Central](https://img.shields.io/maven-central/v/io.github.high-stakes/autointerface.svg)
+![Bintray](https://img.shields.io/bintray/v/high-stakes/github-maven/io.github.high-stakes%3Aautointerface.svg)
 
 Generate Java interfaces from annotated class files based on their public methods.
 
