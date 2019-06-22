@@ -33,7 +33,7 @@ public class AutoInterfaceProcessorTest {
         "",
         "import com.highstakes.autointerface.AutoInterface;",
         "",
-        "@AutoInterface",
+        "@AutoInterface(includeInherted = true)",
         "public class BasicClass<T extends Integer> extends SuperClass<Long> {",
         "    public T method1(T input) { return input; }",
         "    public Integer method2(Integer input) throws Exception { return input; }",

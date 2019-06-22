@@ -72,9 +72,14 @@ public class AutoInterfaceProcessor extends AbstractProcessor {
   }
 
   private void generateInterface(TypeElement rootTypeElemenet) {
+    AutoInterface autoInterface = rootTypeElemenet.getAnnotation(AutoInterface.class);
+
     TypeSpec.Builder typeSpecbuilder = getTypeSpec(rootTypeElemenet)
         .addMethods(
-            filterInterfaceMethods(elementUtils.getAllMembers(rootTypeElemenet)).stream()
+            filterInterfaceMethods(
+                autoInterface.includeInherted() ?  elementUtils.getAllMembers(rootTypeElemenet) :
+                rootTypeElemenet.getEnclosedElements()
+            ).stream()
                 .map(it -> getMethodSpec(rootTypeElemenet, it))
                 .collect(Collectors.toList()));
 
@@ -155,7 +160,8 @@ public class AutoInterfaceProcessor extends AbstractProcessor {
       if (enclosingElement.getKind().equals(ElementKind.PACKAGE)) {
         return typeChain.stream()
             .map(element -> element.getSimpleName().toString())
-            .collect(Collectors.joining("."));
+            .map(str -> str.substring(0, 1).toUpperCase() + str.substring(1))
+            .collect(Collectors.joining());
       }
       type = (TypeElement) enclosingElement;
     }
