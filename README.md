@@ -18,7 +18,7 @@ Generate Java interfaces from annotated class files based on their public method
 ```groovy
 //Reference dependency
 dependencies {
-  annotationProcessor 'io.github.high-stakes:<version>'
+  annotationProcessor 'io.github.high-stakes:autointerface:<version>'
 }
 ```
 
