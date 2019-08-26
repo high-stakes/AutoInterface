@@ -74,7 +74,8 @@ public class AutoInterfaceProcessor extends AbstractProcessor {
   private void generateInterface(TypeElement rootTypeElemenet) {
     AutoInterface autoInterface = rootTypeElemenet.getAnnotation(AutoInterface.class);
 
-    TypeSpec.Builder typeSpecbuilder = getTypeSpec(rootTypeElemenet)
+    TypeSpec.Builder typeSpecbuilder = getTypeSpec(
+        rootTypeElemenet, autoInterface.name(), autoInterface.pkg())
         .addMethods(
             filterInterfaceMethods(
                 autoInterface.includeInherted() ?  elementUtils.getAllMembers(rootTypeElemenet) :
@@ -83,7 +84,8 @@ public class AutoInterfaceProcessor extends AbstractProcessor {
                 .map(it -> getMethodSpec(rootTypeElemenet, it))
                 .collect(Collectors.toList()));
 
-    String packageName = elementUtils.getPackageOf(rootTypeElemenet).getQualifiedName().toString();
+    String packageName =  !"".equals(autoInterface.pkg()) ? autoInterface.pkg() :
+        elementUtils.getPackageOf(rootTypeElemenet).getQualifiedName().toString();
     JavaFile javaFile =
         JavaFile.builder(packageName, typeSpecbuilder.build()).indent("    ").build();
     try {
@@ -105,8 +107,8 @@ public class AutoInterfaceProcessor extends AbstractProcessor {
         .collect(Collectors.toList());
   }
 
-  private TypeSpec.Builder getTypeSpec(TypeElement type) {
-    return TypeSpec.interfaceBuilder(getInterfaceName(type))
+  private TypeSpec.Builder getTypeSpec(TypeElement type, String name, String pkg) {
+    return TypeSpec.interfaceBuilder(getInterfaceClass(type, name, pkg))
         .addModifiers(Modifier.PUBLIC)
         .addTypeVariables(getTypeVariables(type))
         .addOriginatingElement(type);
@@ -139,9 +141,9 @@ public class AutoInterfaceProcessor extends AbstractProcessor {
         .build();
   }
 
-  private ClassName getInterfaceName(TypeElement type) {
-    String interfaceName = getClassName(type) + "Interface";
-    String packageName = elementUtils.getPackageOf(type).getQualifiedName().toString();
+  private ClassName getInterfaceClass(TypeElement type, String name, String pkg) {
+    String interfaceName = !"".equals(name) ? name : getClassName(type) + "Interface";
+    String packageName = !"".equals(pkg) ? pkg : elementUtils.getPackageOf(type).getQualifiedName().toString();
     return ClassName.get(packageName, interfaceName);
   }
 

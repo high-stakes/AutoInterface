@@ -138,4 +138,60 @@ public class AutoInterfaceProcessorTest {
         .generatedSourceFile("test.BasicClassInterface")
         .hasSourceEquivalentTo(generatedInterface);
   }
+
+
+  @Test
+  public void shouldFollowCustomNaming() {
+    JavaFileObject sourceClass = JavaFileObjects.forSourceLines("test.BaseClass",
+        "package test;",
+        "import com.highstakes.autointerface.AutoInterface;",
+        "",
+        "@AutoInterface(name = \"BaseInt\")",
+        "public class BaseClass {",
+        "    public void baseClassMethod1() {}",
+        "}");
+
+    JavaFileObject generatedInterface = JavaFileObjects.forSourceLines("test.BaseInt",
+        "package test;\n"
+            + "\n"
+            + "public interface BaseInt {\n"
+            + "    void baseClassMethod1();\n"
+            + "}"
+    );
+
+    Compilation compilation = javac().withProcessors(new AutoInterfaceProcessor())
+        .compile(sourceClass);
+    assertThat(compilation).succeededWithoutWarnings();
+    assertThat(compilation)
+        .generatedSourceFile("test.BaseInt")
+        .hasSourceEquivalentTo(generatedInterface);
+  }
+
+  @Test
+  public void shouldFollowCustomPkg() {
+    JavaFileObject sourceClass = JavaFileObjects.forSourceLines("test.BaseClass",
+        "package test;",
+        "import com.highstakes.autointerface.AutoInterface;",
+        "",
+        "@AutoInterface(pkg = \"result\")",
+        "public class BaseClass {",
+        "    public void baseClassMethod1() {}",
+        "}");
+
+    JavaFileObject generatedInterface = JavaFileObjects.forSourceLines("result.BaseClassInterface",
+        "package result;\n"
+            + "\n"
+            + "public interface BaseClassInterface {\n"
+            + "    void baseClassMethod1();\n"
+            + "}"
+    );
+
+    Compilation compilation = javac().withProcessors(new AutoInterfaceProcessor())
+        .compile(sourceClass);
+    assertThat(compilation).succeededWithoutWarnings();
+    assertThat(compilation)
+        .generatedSourceFile("result.BaseClassInterface")
+        .hasSourceEquivalentTo(generatedInterface);
+  }
+
 }
