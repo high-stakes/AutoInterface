@@ -22,7 +22,6 @@ dependencies {
 
   testCompile 'com.google.testing.compile:compile-testing:0.16'
   testCompile 'junit:junit:4.12'
-  testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
 }
 
 group = 'io.github.high-stakes'
