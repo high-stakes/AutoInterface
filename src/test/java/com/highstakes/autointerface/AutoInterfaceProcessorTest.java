@@ -174,6 +174,7 @@ public class AutoInterfaceProcessorTest {
         "import com.highstakes.autointerface.AutoInterface;",
         "",
         "@AutoInterface(pkg = \"result\")",
+        "\n",
         "public class BaseClass {",
         "    public void baseClassMethod1() {}",
         "}");
@@ -194,4 +195,118 @@ public class AutoInterfaceProcessorTest {
         .hasSourceEquivalentTo(generatedInterface);
   }
 
+  @Test
+  public void shouldWorkWithStaticClasses() {
+    JavaFileObject sourceClass = JavaFileObjects.forSourceLines("test.BaseClass",
+            "package test;",
+            "import com.highstakes.autointerface.AutoInterface;",
+            "",
+            "public class BaseClass {",
+            "    public void baseClassMethod1() {}",
+            "    @AutoInterface(pkg = \"result\")",
+            "    public static class InnerClass {",
+            "           public void innerClassMethod1() {}",
+            "    }",
+            "}");
+
+    JavaFileObject generatedInterface = JavaFileObjects.forSourceLines("result.BaseClassInterface",
+            "package result;\n"
+                    + "\n"
+                    + "public interface InnerClassBaseClassInterface {\n"
+                    + "    void innerClassMethod1();\n"
+                    + "}"
+    );
+
+    Compilation compilation = javac().withProcessors(new AutoInterfaceProcessor())
+            .compile(sourceClass);
+    assertThat(compilation).succeededWithoutWarnings();
+    assertThat(compilation)
+            .generatedSourceFile("result.InnerClassBaseClassInterface")
+            .hasSourceEquivalentTo(generatedInterface);
+  }
+
+  @Test
+  public void shouldGenerateDecorator() {
+    JavaFileObject sourceClass = JavaFileObjects.forSourceLines("test.BaseClass",
+            "package test;",
+            "import com.highstakes.autointerface.AutoInterface;",
+            "import java.util.ArrayList;",
+            "import java.util.List;",
+            "",
+            "@AutoInterface(pkg = \"result\", createDecorator = true)",
+            "public class BaseClass<T, G extends List<T>> {",
+            "    public T baseClassMethod1(T p1, ArrayList<? extends ArrayList> p2) { return p1; }",
+            "}");
+
+    JavaFileObject generatedInterface = JavaFileObjects.forSourceLines("result.BaseClassInterface",
+            "package result;\n"
+                    + "import java.util.ArrayList;\n"
+                    + "import java.util.List;\n"
+                    + "\n"
+                    + "public interface BaseClassInterface<T, G extends List<T>> {\n"
+                    + "    T baseClassMethod1(T p1, ArrayList<? extends ArrayList> p2);\n"
+                    + "}"
+    );
+
+    JavaFileObject generatedDecorator = JavaFileObjects.forSourceLines("result.BaseClassInterface",
+            "package result;\n"
+                    + "\n"
+                    + "import java.lang.Override;\n"
+                    + "import java.util.ArrayList;\n"
+                    + "import java.util.List;\n"
+                    + "\n"
+                    + "public interface BaseClassDecorator<T, G extends List<T>> extends BaseClassInterface<T, G> {\n"
+                    + "    BaseClassInterface<T, G> getDecoratedObject();\n"
+                    + "\n"
+                    + "    @Override\n"
+                    + "    default T baseClassMethod1(T p1, ArrayList<? extends ArrayList> p2) {\n"
+                    + "        return getDecoratedObject().baseClassMethod1(p1,p2);\n"
+                    + "    }\n"
+                    + "}"
+    );
+
+    Compilation compilation = javac().withProcessors(new AutoInterfaceProcessor())
+            .compile(sourceClass);
+    assertThat(compilation).succeededWithoutWarnings();
+    assertThat(compilation)
+            .generatedSourceFile("result.BaseClassDecorator")
+            .hasSourceEquivalentTo(generatedDecorator);
+    assertThat(compilation)
+            .generatedSourceFile("result.BaseClassInterface")
+            .hasSourceEquivalentTo(generatedInterface);
+  }
+
+  @Test
+  public void shouldCreateDecoratorOnlyIfRootIsInterface() {
+    JavaFileObject sourceClass = JavaFileObjects.forSourceLines("test.BaseInterface",
+            "package test;",
+            "import com.highstakes.autointerface.AutoInterface;",
+            "",
+            "@AutoInterface(pkg = \"result\", createDecorator = true)",
+            "public interface BaseInterface {",
+            "    public void baseClassMethod1();",
+            "}");
+
+    JavaFileObject generatedInterface = JavaFileObjects.forSourceLines("result.BaseClassInterface",
+            "package result;\n",
+                    "import java.lang.Override;\n"
+                    + "import test.BaseInterface;\n"
+                    + "\n"
+                    + "public interface BaseInterfaceDecorator extends BaseInterface {\n"
+                    + "    BaseInterface getDecoratedObject();\n"
+                    + "\n"
+                    + "    @Override\n"
+                    + "    default void baseClassMethod1() {\n"
+                    + "        getDecoratedObject().baseClassMethod1();\n"
+                    + "    }\n"
+                    + "}"
+    );
+
+    Compilation compilation = javac().withProcessors(new AutoInterfaceProcessor())
+            .compile(sourceClass);
+    assertThat(compilation).succeededWithoutWarnings();
+    assertThat(compilation)
+            .generatedSourceFile("result.BaseInterfaceDecorator")
+            .hasSourceEquivalentTo(generatedInterface);
+  }
 }

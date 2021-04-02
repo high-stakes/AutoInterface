@@ -28,4 +28,8 @@ public @interface AutoInterface {
    * Whether to include inherited methods of the class in the interface. Defaults to false.
    */
   boolean includeInherted() default false;
+
+  boolean createDecorator() default false;
+
+  String decoratorName() default "";
 }

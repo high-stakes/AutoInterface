@@ -18,10 +18,11 @@ repositories {
 dependencies {
   compileOnly 'com.google.auto.service:auto-service:1.0-rc5'
   annotationProcessor 'com.google.auto.service:auto-service:1.0-rc5'
-  compile 'com.squareup:javapoet:1.11.1'
+  compile 'com.squareup:javapoet:1.13.0'
 
   testCompile 'com.google.testing.compile:compile-testing:0.16'
   testCompile 'junit:junit:4.12'
+  testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
 }
 
 group = 'io.github.high-stakes'
