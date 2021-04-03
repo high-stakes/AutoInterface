@@ -3,7 +3,8 @@
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.high-stakes/autointerface.svg)
 ![Bintray](https://img.shields.io/bintray/v/high-stakes/github-maven/io.github.high-stakes%3Aautointerface.svg)
 
-Generate Java interfaces from annotated class files based on their public methods.
+* Generate Java interfaces from annotated class files based on their public methods.
+* Generate Decorator interface for classes or interfaces
 
 ## Benefits
 
@@ -24,7 +25,7 @@ dependencies {
 
 ```java
 //Annotated the class you wish to generate an interface for
-@AutoInterface
+@AutoInterface(createDecorator=true)
 public final class MyClass {
   public void myMethod() {}
 }
@@ -32,5 +33,12 @@ public final class MyClass {
 //Generates
 public interface MyClassInterface {
   void myMethod();
+}
+public interface MyClassDecorator extends MyClassInterface {
+  MyClassInterface getDecoratedObject();
+  
+  void myMethod() {
+    getDecoratedObject().myMyethod();
+  }
 }
 ```
